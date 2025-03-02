@@ -1,3 +1,4 @@
+# libraries
 import http.client
 import json
 from typing import Union, Dict
@@ -8,6 +9,7 @@ import pickle
 import os
 import math
 import numpy as np
+import zipfile
 
 logger = logging.getLogger(__name__)
 
@@ -71,34 +73,38 @@ def calculate_railway_metrics(road_distance: float) -> Dict[str, float]:
 def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Calculate the distance between two points from lat/long into kilometers"""
     R = 6371  # Earth radius in kilometers
-
+    
     # Convert degrees to radians
     lat1_rad, lon1_rad, lat2_rad, lon2_rad = map(math.radians, [lat1, lon1, lat2, lon2])
-
+    
     # Differences
     dlat = lat2_rad - lat1_rad
     dlon = lon2_rad - lon1_rad
-
+    
     # Haversine formula
     a = math.sin(dlat / 2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2)**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-
+    
     return R * c
 
 def longitude_distance(latitude: float) -> float:
     """Returns the distance in kilometers per degree of longitude at a given latitude"""
     return 111.32 * math.cos(math.radians(latitude))
 
-# Load cache of population data into a DataFrame
-global_data = pd.DataFrame(pickle.load(open("population_cache.pkl", "rb")), columns=['longitude', 'latitude', 'population'])
 
+# Unpack the cache.zip file
+with zipfile.ZipFile("cache.zip", "r") as zip_ref:
+    zip_ref.extract("cache.pkl")
+
+# Load the cache.pkl into a DataFrame
+global_data = pd.DataFrame(pickle.load(open("cache.pkl", "rb")), columns=['longitude', 'latitude', 'population'])
 # Filter out rows with zero population
 global_data = global_data[global_data['population'] != 0.0]
 
 def calculate_population(longitude: float, latitude: float, radius: float) -> float:
     """Calculate the total population within a given radius of a point"""
     data = global_data.copy()
-
+    
     # Calculate distance bounds
     lat_distance = radius / 111
     lon_distance = longitude_distance(latitude)
@@ -163,3 +169,29 @@ def yearly_profit(yearly_cost: float, yearly_revenue: float) -> float:
     """Calculate yearly profit based on yearly cost and revenue"""
     return yearly_revenue - yearly_cost
 
+
+
+
+
+distance = 80
+population1 = (calculate_population(-84.512016, 39.103119, 10))  # Example usage
+population2 = (calculate_population(-84.191605, 39.758949, 10))  # Example usage
+ridership = (calculate_ridership(population1, population2, distance))
+estimated_cost = 30000000*distance
+travel_time = travel_time(distance)
+yearly_cost = yearly_cost(distance)
+revenue = revenue(ridership)
+yearly_profit = yearly_profit(yearly_cost, revenue)
+
+print(f"Estimated Construction Cost: ${estimated_cost}")
+print(f"Estimated Ridership: {ridership}")
+print(f"Travel Time: {travel_time} minutes")
+print(f"Yearly Cost: ${yearly_cost}")
+print(f"Yearly Profit: ${yearly_profit}")
+print(f"Population in radius of 10 km: {population1}")
+print(f"Population in radius of 10 km: {population2}")
+print(f"Years to profit: {estimated_cost/(yearly_profit)}")
+
+print(calculate_ridership(1000000,1000000, 200))
+
+print(travel_time(80))
