@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>High Speed Rail Route</title>
+    <style>
+        #map {
+            height: 500px;
+            width: 50%;
+        }
+
+        .slider-label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        .city-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>High Speed Rail Route</h1>
+    <div class="city-group">
+        <label for="city1">Select City 1:</label>
+        <select id="city1">
+            <option value="chicago">Chicago</option>
+            <option value="dayton">Dayton</option>
+            <option selected ="selected" value="cincy">Cincinnati</option>
+            <option value="columbus">Columbus</option>
+            <option value="cleveland">Cleveland</option>
+            <option value="los_angeles">Los Angeles</option>
+            <option value="san_fransansico">San Francisco</option>
+            <option value="las_vegas">Las Vegas</option>
+            <option value="st_louis">St. Louis</option>
+            <option value="louisville">Louisville</option>
+            <option value="nashville">Nashville</option>
+            <option value="indianapolis">Indianapolis</option>
+        </select>
+        <label class="slider-label" for="radius1">Radius for City 1 (km): <span id="radius1-value">15</span></label>
+        <input type="range" id="radius1" min="1" max="50" value="15" oninput="updateRadiusValue('radius1')">
+    </div>
+
+    <div class="city-group">
+        <label for="city2">Select City 2:</label>
+        <select id="city2">
+            <option value="chicago">Chicago</option>
+            <option selected ="selected" value="dayton">Dayton</option>
+            <option value="cincy">Cincinnati</option>
+            <option value="columbus">Columbus</option>
+            <option value="cleveland">Cleveland</option>
+            <option value="los_angeles">Los Angeles</option>
+            <option value="san_fransansico">San Francisco</option>
+            <option value="las_vegas">Las Vegas</option>
+            <option value="st_louis">St. Louis</option>
+            <option value="louisville">Louisville</option>
+            <option value="nashville">Nashville</option>
+            <option value="indianapolis">Indianapolis</option>
+        </select>
+        <label class="slider-label" for="radius2">Radius for City 2 (km): <span id="radius2-value">10</span></label>
+        <input type="range" id="radius2" min="1" max="50" value="10" oninput="updateRadiusValue('radius2')">
+    </div>
+
+    <button onclick="updateRoute()">Update Route</button>
+
+    <div id="map"></div>
+
+    <script>
+        let map;
+        let marker;
+        let polyline;
+        let animationPath = [];
+        let animationCounter = 0;
+
+        const cities = {
+            chicago: [-87.629799, 41.878113],
+            dayton: [-84.191605, 39.758949],
+            cincy: [-84.512016, 39.103119],
+            columbus: [-82.998794, 39.961176],
+            cleveland: [-81.694360, 41.499320],
+            los_angeles: [-118.2437, 34.0522],
+            san_fransansico: [-122.4194, 37.7749],
+            las_vegas: [-115.139832, 36.169941],
+            st_louis: [-90.199402, 38.627003],
+            louisville: [-85.758456, 38.2527],
+            nashville: [-86.781601, 36.162201],
+            indianapolis: [-86.158043, 39.768402]
+        };
+
+        function updateRadiusValue(id) {
+            const value = document.getElementById(id).value;
+            document.getElementById(`${id}-value`).innerText = value;
+        }
+
+        function updateRoute() {
+            const city1 = document.getElementById("city1").value;
+            const city2 = document.getElementById("city2").value;
+            const radius1 = parseFloat(document.getElementById("radius1").value) * 1000; // Convert to meters
+            const radius2 = parseFloat(document.getElementById("radius2").value) * 1000; // Convert to meters
+
+            const location1 = { lat: cities[city1][1], lng: cities[city1][0] };
+            const location2 = { lat: cities[city2][1], lng: cities[city2][0] };
+
+            // Calculate bounds
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(location1);
+            bounds.extend(location2);
+
+            // Create map with calculated bounds
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: bounds.getCenter(),
+                zoom: getZoomLevel(bounds)
+            });
+
+            // Create circles for radius
+            new google.maps.Circle({
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.15,
+                map: map,
+                center: location1,
+                radius: radius1
+            });
+
+            new google.maps.Circle({
+                strokeColor: "#0000FF",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#0000FF",
+                fillOpacity: 0.15,
+                map: map,
+                center: location2,
+                radius: radius2
+            });
+
+            // Create markers for locations
+            new google.maps.Marker({
+                position: location1,
+                map: map,
+                title: "Location 1"
+            });
+
+            new google.maps.Marker({
+                position: location2,
+                map: map,
+                title: "Location 2"
+            });
+
+            // Get route directions
+            const directionsService = new google.maps.DirectionsService();
+            directionsService.route(
+                {
+                    origin: location1,
+                    destination: location2,
+                    travelMode: google.maps.TravelMode.DRIVING
+                },
+                (response, status) => {
+                    if (status === "OK") {
+                        // Extract path points from route
+                        const route = response.routes[0].overview_path;
+                        animationPath = route;
+
+                        // Draw route line
+                        polyline = new google.maps.Polyline({
+                            path: route,
+                            strokeColor: "#FF0000",
+                            strokeOpacity: 1.0,
+                            strokeWeight: 4,
+                            map: map
+                        });
+
+                        // Create marker with custom image
+                        marker = new google.maps.Marker({
+                            position: route[0],
+                            map: map,
+                            // Replace this URL with your actual image URL
+                            icon: {
+                                url: 'https://www.mbusa.com/content/dam/mb-nafta/us/myco/my24/amg-gt-class/2-door/all-vehicles/2024-AMG-GT55-COUPE-AVP-DR.png',
+                                // Size of the image (width, height in pixels)
+                                scaledSize: getScaledSize(map.getZoom()),
+                                // The center of the image relative to 0,0 (the top left)
+                                // in the coordinates of the original image
+                                origin: new google.maps.Point(0, 0),
+                                // The anchor for this image at the bottom center
+                                anchor: new google.maps.Point(15, 15)
+                            }
+                        });
+
+                        // Listen for zoom changes to update marker size
+                        map.addListener('zoom_changed', () => {
+                            const zoom = map.getZoom();
+                            const icon = marker.getIcon();
+                            icon.scaledSize = getScaledSize(zoom);
+                            marker.setIcon(icon);
+                        });
+
+                        // Start animation
+                        animateMarker();
+                    } else {
+                        console.error("Directions request failed due to " + status);
+                        alert("Directions failed. Please check console for details.");
+
+                        // Fit map to show both locations
+                        map.fitBounds(bounds);
+                    }
+                }
+            );
+        }
+
+        function getZoomLevel(bounds) {
+            const mapDim = { height: 500, width: 500 }; // Map dimensions in pixels
+            const WORLD_DIM = { height: 256, width: 256 };
+            const ZOOM_MAX = 21;
+
+            function latRad(lat) {
+                const sin = Math.sin(lat * Math.PI / 180);
+                const radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+                return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+            }
+
+            function zoom(mapPx, worldPx, fraction) {
+                return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
+            }
+
+            const ne = bounds.getNorthEast();
+            const sw = bounds.getSouthWest();
+
+            const latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
+
+            const lngDiff = ne.lng() - sw.lng();
+            const lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+            const latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
+            const lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
+
+            return Math.min(latZoom, lngZoom, ZOOM_MAX);
+        }
+
+        function getScaledSize(zoom) {
+            // Adjust the size based on the zoom level
+            const size = Math.max(50, zoom * 3); // Example scaling factor
+            return new google.maps.Size(size, size);
+        }
+
+        direction = 1;
+
+        function animateMarker() {
+            if (animationCounter >= animationPath.length - 1) {
+                direction = -1;
+            } else if (animationCounter <= 0) {
+                direction = 1;
+            }
+
+            // Move marker along the path
+            marker.setPosition(animationPath[animationCounter]);
+
+            // Calculate heading for rotation (if you want the image to rotate)
+            if (animationCounter < animationPath.length - 1) {
+                const p1 = animationPath[animationCounter];
+                const p2 = animationPath[animationCounter + 1];
+                const heading = google.maps.geometry.spherical.computeHeading(p1, p2);
+
+                // Update icon with rotation
+            }
+
+            animationCounter += direction * 10;
+            setTimeout(animateMarker, 100);
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyATOKe_Pp-0zN_62IXMaLkekcqEKghk5bg&callback=initMap" async defer></script>
+</body>
+</html>
+
+
+
