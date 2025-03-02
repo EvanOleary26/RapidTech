@@ -97,6 +97,15 @@ with zipfile.ZipFile("cache.zip", "r") as zip_ref:
     zip_ref.extract("cache.pkl")
 
 # Load the cache.pkl into a DataFrame
+"""
+Data Source:
+
+WorldPop (www.worldpop.org - School of Geography and Environmental Science, University of Southampton; 
+Department of Geography and Geosciences, University of Louisville; Departement de Geographie, Universite de Namur) 
+and Center for International Earth Science Information Network (CIESIN), Columbia University (2018). 
+Global High Resolution Population Denominators Project - Funded by The Bill and Melinda Gates Foundation (OPP1134076). 
+https://dx.doi.org/10.5258/SOTON/WP00670
+"""
 global_data = pd.DataFrame(pickle.load(open("cache.pkl", "rb")), columns=['longitude', 'latitude', 'population'])
 # Filter out rows with zero population
 global_data = global_data[global_data['population'] != 0.0]
