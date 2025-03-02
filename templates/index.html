@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2>Railway Simulator</h2>
+                <p class="card-text"> Ever wondered what the world would be like if we had train infrastructure rather than cars? Well, with Railway Sim, you can find out! Simply put in two locations and our program will calculate the distance between them based on current roads. Then, we will calculate how much it would cost to build a high speed railway between those two locations. To go further, we also implemented worldPop API to calculate the number of people living in each of these locations, then analyzing how many people would benefit from the rail. Other implementations may include travel time versus car, CO2 emmissions, and more!</p>
+                <!--Buttons (tabs)-->
+                <div class="tab">
+                  <button class="tablinks" onclick="openTab(event, 'TextTab')" id="defaultOpen">Text</button>
+                  <button class="tablinks" onclick="openTab(event, 'MapTab')">Map</button>
+                </div>
+                <!--Text Tab-->
+                <div id="TextTab" class="tabcontent">
+                    <form id="routeForm" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="origin" class="form-label">Origin Location</label>
+                            <input type="text" class="form-control" id="origin" name="origin" required>
+                            <div class="invalid-feedback">Please enter an origin location.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="destination" class="form-label">Destination Location</label>
+                            <input type="text" class="form-control" id="destination" name="destination" required>
+                            <div class="invalid-feedback">Please enter a destination location.</div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary" id="calculateBtn">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            Calculate <!--Text that goes in the submit button-->
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!--Text Results-->
+                <div id="results" class="card mt-4 d-none">
+                    <div class="card-body">
+                        <h3 class="card-title">Results</h3>
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="info-card mb-3">
+                                    <h4>Road Distance</h4>
+                                    <h2 id="roadDistance">-- km</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card mb-3">
+                                    <h4>Rail Distance</h4>
+                                    <h2 class="h2" id="railDistance">-- km</h2>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="info-card mb-3">
+                                    <h4>Estimated Cost</h4> 
+                                    <h2 class="h2" id="estimatedCost">--</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <h4>CO2 Savings</h4>
+                                    <h2 class="h2" id="co2Savings">-- kg</h2>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="error" class="alert alert-danger mt-4 d-none" role="alert"></div>
+            </div>
+        </div>
+    </div>
+    <!--Map Tab-->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div id="MapTab" class="tabcontent">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h2>Adjust Parameters</h2>
+                        <form id="mapForm">
+                            <div class="mb-3">
+                                <label for="populationRadius" class="form-label">Population Radius (km)</label>
+                                <input type="range" class="form-range" id="populationRadius" name="populationRadius" min="1" max="100" value="50" oninput="this.nextElementSibling.value = this.value">
+                                <output>50</output> km
+                            </div>
+                            <div class="mb-3">
+                                <label for="ticketPrice" class="form-label">Ticket Price ($)</label>
+                                <input type="range" class="form-range" id="ticketPrice" name="ticketPrice" min="10" max="200" value="80" oninput="this.nextElementSibling.value = this.value">
+                                <output>80</output> $
+                            </div>
+                            <div class="mb-3">
+                                <label for="maxSpeed" class="form-label">Max Speed (km/h)</label>
+                                <input type="range" class="form-range" id="maxSpeed" name="maxSpeed" min="100" max="400" value="250" oninput="this.nextElementSibling.value = this.value">
+                                <output>250</output> km/h
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   
+
+{% endblock %}

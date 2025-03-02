@@ -1,0 +1,121 @@
+:root[data-bs-theme="dark"] {
+    --bs-body-bg: #053067;
+    --light-blue: #98dcf0;
+    --navy-blue: #031f44;
+    --light-red: #e02d35;
+    --bs-main-bg-color: #053067;
+    --dark-red: #8b0e19;
+
+}
+
+h2{
+    text-align: center;
+    color: #ffff;
+}
+
+
+.tabLinks{
+    :active{
+        background-color: var(--dark-red)
+    }
+}
+
+.info-card {
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--navy-blue);
+    height: 100%;
+}
+
+.card-text{
+    color:var(--light-blue)
+}
+
+.info-card h4 {
+    color: var(--light-red);
+    margin-bottom: 1rem;
+}
+
+.info-card h2 {
+    margin-left: 1.25rem;
+}
+
+.card {
+    border: 1px solid var(--bs-border-color);
+    background-color: var(--navy-blue);
+    width: auto;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--navy-blue) !important;
+    border-top: 1px solid var(--bs-border-color);
+}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid var(--bs-border-color);
+  background-color: var(--navy-blue);
+  text-align: center;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: middle;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 20%;
+  transition: 0.3s;
+
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: var(--dark-red);
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: var(--light-red);
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+}
+
+#link {
+    margin-top: 10px;
+    margin-right: 5px;
+    text-decoration: none;
+    color: var(--light-red);
+    text-decoration: none;
+}
+
+#embed-link{
+    color: var(--light-blue);
+    text-decoration: none;
+}
+
+main {
+    margin-bottom: 100px;
+    background-color: var(--main-bg-color);
+    font-family: "Roboto", sans-serif;
+}
+
+#logo {
+    width:70px;
+    height:auto;
+    padding-left:20px;
+}
+
+.card-body{
+    width: auto;
+}
