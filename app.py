@@ -25,9 +25,9 @@ def calculate():
     populationA = calculate_population(0, 0, 50)  # Replace with actual coordinates
     populationB = calculate_population(0, 0, 50)  # Replace with actual coordinates
     ridership = calculate_ridership(populationA, populationB, road_distance)
-    yearly_revenue = revenue(ridership)
-    yearly_cost_value = yearly_cost(road_distance)
-    yearly_profit_value = yearly_profit(yearly_cost_value, yearly_revenue)
+    yearly_revenue = 1 # CHANGED
+    yearly_cost_value = 1 # CHANGED
+    yearly_profit_value = 1 #CHANGED
 
     return jsonify({
         'road_distance': road_distance,

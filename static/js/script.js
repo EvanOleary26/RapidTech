@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update results
             document.getElementById('roadDistance').textContent = `${data.road_distance} Km`;
             document.getElementById('railDistance').textContent = `${data.railway_metrics.rail_distance} Km`;
-            document.getElementById('estimatedCost').textContent = `$${data.railway_metrics.estimated_cost.toLocaleString("en-US")}`;
+            document.getElementById('estimatedCost').textContent = `$${data.railway_metrics.estimated_cost}`;
             document.getElementById('co2Savings').textContent = `${data.railway_metrics.co2_savings} Kg`;
 
             resultsDiv.classList.remove('d-none');
