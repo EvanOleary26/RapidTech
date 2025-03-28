@@ -5,15 +5,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const resultsDiv = document.getElementById('results');
     const errorDiv = document.getElementById('error');
     const mapForm = document.getElementById('mapForm');
+    const advancedResultsDiv = document.getElementById('advancedResults');
+    const advancedResultsBtn = document.getElementById('advancedResultsBtn');
 
     let konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // Up, Up, Down, Down, Left, Right, Left, Right, B, A
     let keyPresses = []; 
+    
+    
+
     document.addEventListener('keydown', function(e) {
       keyPresses.push(e.keyCode);
       if (keyPresses.slice(-konamiCode.length).join('') === konamiCode.join('')) {
           window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
         keyPresses = []; // Reset the sequence
       }
+    });
+
+    advancedResultsBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        advancedResultsDiv.classList.toggle('d-none');
+    });
+
+    resultsDiv.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        advancedResultsDiv.classList.remove('d-none');
     });
 
     form.addEventListener('submit', async function(e) {
@@ -46,10 +61,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Update results
+            document.getElementById('estimatedCost').textContent = `$${data.estimated_cost}`;
+            document.getElementById('ridership').textContent = `${data.ridership} People`;
             document.getElementById('roadDistance').textContent = `${data.road_distance} Km`;
-            document.getElementById('railDistance').textContent = `${data.railway_metrics.rail_distance} Km`;
-            document.getElementById('estimatedCost').textContent = `$${data.railway_metrics.estimated_cost}`;
-            document.getElementById('co2Savings').textContent = `${data.railway_metrics.co2_savings} Kg`;
+            document.getElementById('travelTime').textContent = `${data.travel_time} Minutes`;
+            document.getElementById('yearlyCost').textContent = `$${data.yearly_cost}`;
+            document.getElementById('yearsToEven').textContent = `${data.years_to_even} Years`;
+            document.getElementById('profit').textContent = `$${data.profit}`;
+            document.getElementById('population1').textContent = `${data.populationA} People`;
+            document.getElementById('population2').textContent = `${data.populationB} People`;
 
             resultsDiv.classList.remove('d-none');
         } catch (error) {
@@ -73,6 +93,8 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`Ticket Price: $${ticketPrice}`);
         console.log(`Max Speed: ${maxSpeed} km/h`);
     });
+
+
 });
 
 function openTab(evt, tabName) {

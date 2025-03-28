@@ -38,37 +38,85 @@
                     <div class="card-body">
                         <h3 class="card-title">Results</h3>
                         <div class="row">
+                            <!-- Column 1: Map -->
+                            <div class="col-md-4">
+                                <div class="info-card mb-3">
+                                    <h4>Map Here</h4> <!-- Map Placeholder -->
+                                </div>
+                            </div>
+                        
+                            <!-- Column 2: Info Cards -->
+                            <div class="col-md d-flex flex-column">
+                                <div class="info-card flex-fill mb-3">
+                                    <h4>Estimated Construction Cost</h4>
+                                    <h2 id="estimatedCost">--</h2>
+                                </div>
+                                <div class="info-card flex-fill">
+                                    <h4>Estimated Ridership</h4>
+                                    <h2 id="ridership">--</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="info-card mb-3">
                                     <h4>Road Distance</h4>
                                     <h2 id="roadDistance">-- km</h2>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="info-card mb-3">
-                                    <h4>Rail Distance</h4>
-                                    <h2 class="h2" id="railDistance">-- km</h2>
+                                    <h4>Travel Time</h4>
+                                    <h2 class="h2" id="travelTime">-- People per Year</h2>
                                 </div>
                             </div>
                             
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="info-card mb-3">
-                                    <h4>Estimated Cost</h4> 
-                                    <h2 class="h2" id="estimatedCost">--</h2>
+                                    <h4>Maintancence Per Year</h4> 
+                                    <h2 class="h2" id="yearlyCost">--</h2>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="info-card">
-                                    <h4>CO2 Savings</h4>
-                                    <h2 class="h2" id="co2Savings">-- kg</h2>
+                                    <h4>Years until running even</h4>
+                                    <h2 class="h2" id="yearsToEven">-- kg</h2>
                                 </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="info-card">
+                                    <h4>Yearly Profit</h4>
+                                    <h2 class="h2" id="profit">-- kg</h2>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary" id="advancedResultsBtn">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                Advanced <!--Text that goes in the submit button-->
+                                </button>
                             </div>
 
                         </div>
-                    </div>
+
+                        <div id="advancedResults" class="row d-none">
+                            <div class="col-md-6">
+                                <div class="info-card mb-3">
+                                    <h4>Population 1 estimate</h4>
+                                    <h2 id="population1">-- kg</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="info-card mb-3">
+                                    <h4>Population 2 estimate</h4>
+                                    <h2 id="population2">-- kg</h2>
+                                </div>
+                        </div>
                 </div>
                 <div id="error" class="alert alert-danger mt-4 d-none" role="alert"></div>
             </div>

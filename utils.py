@@ -13,6 +13,34 @@ import zipfile
 
 logger = logging.getLogger(__name__)
 
+def calculate_population_from_api(city: str, api_key: str):
+    encoded_city = urllib.parse.quote(city)
+
+    conn = http.client.HTTPSConnection("api.api-ninjas.com")
+
+    headers = { 'x-api-key': api_key }
+
+    conn.request("GET", "/v1/city?name=" + encoded_city, headers=headers)
+
+    res = conn.getresponse()
+    '''
+    data = res.read()
+
+    print(data.decode("utf-8"))
+
+    conn = http.client.HTTPSConnection("api.api-ninjas.com")
+
+    path = f"/v1/population?city={encoded_city}&key={api_key}"
+
+    conn.request("GET", path)
+    response = conn.getresponse() 
+    '''
+    data = json.loads(res.read().decode("utf-8"))
+
+    population = data[0]["population"]
+
+    return population
+
 def calculate_distance(origin: str, destination: str, api_key: str) -> Union[float, str]:
     """Calculate road distance using Google Distance Matrix API"""
     if not api_key:
@@ -156,9 +184,9 @@ def calculate_ridership(populationA: float, populationB: float, distance: float,
     distance_modifier = 2
     base_factor = 11.67
     population_scaling = 0.8
-    return mode_share * base_factor * (populationA)**population_scaling * (populationB)**population_scaling / distance**distance_modifier
+    return round(mode_share * base_factor * (populationA)**population_scaling * (populationB)**population_scaling / distance**distance_modifier)
 
-def revenue(ridership: float, ticket_price: float = 80) -> float:
+def revenue(ridership: float, ticket_price: float = 80.0) -> float:
     """Calculate revenue based on ridership and ticket price, default price is 80 ($)"""
     return ridership * ticket_price
 
@@ -174,10 +202,13 @@ def yearly_cost(distance: float, cost_per_km: float = 1_000_000) -> float:
     """Calculate yearly cost based on distance and cost per km, default is 1,000,000$/km"""
     return distance * cost_per_km
 
-def yearly_profit(yearly_cost: float, yearly_revenue: float) -> float:
+def yearly_profit(yearly_cost_value: float, yearly_revenue_value: float) -> float:
     """Calculate yearly profit based on yearly cost and revenue"""
-    return yearly_revenue - yearly_cost
+    return yearly_revenue_value - yearly_cost_value
 
+def years_to_profit(estimated_cost: float, yearly_profit_value: float) -> float:
+    """Calculate the number of years to profit based on estimated cost and yearly profit"""
+    return estimated_cost / yearly_profit_value
 
 
 
@@ -187,19 +218,19 @@ population1 = (calculate_population(-84.512016, 39.103119, 10))  # Example usage
 population2 = (calculate_population(-84.191605, 39.758949, 10))  # Example usage
 ridership = (calculate_ridership(population1, population2, distance))
 estimated_cost = 30000000*distance
-travel_time = travel_time(distance)
-yearly_cost = yearly_cost(distance)
-revenue = revenue(ridership)
-yearly_profit = yearly_profit(yearly_cost, revenue)
+travel_time_value = travel_time(distance)
+yearly_cost_value = yearly_cost(distance)
+revenue_value = revenue(ridership)
+yearly_profit_value = yearly_profit(yearly_cost_value, revenue_value)
 
 print(f"Estimated Construction Cost: ${estimated_cost}")
 print(f"Estimated Ridership: {ridership}")
-print(f"Travel Time: {travel_time} minutes")
-print(f"Yearly Cost: ${yearly_cost}")
-print(f"Yearly Profit: ${yearly_profit}")
+print(f"Travel Time: {travel_time_value} minutes")
+print(f"Yearly Cost: ${yearly_cost_value}")
+print(f"Yearly Profit: ${yearly_profit_value}")
 print(f"Population in radius of 10 km: {population1}")
 print(f"Population in radius of 10 km: {population2}")
-print(f"Years to profit: {estimated_cost/(yearly_profit)}")
+print(f"Years to profit: {estimated_cost/(yearly_profit_value)}")
 
 print(calculate_ridership(1000000,1000000, 200))
 
